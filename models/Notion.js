@@ -1,7 +1,8 @@
-const mongoose = require("mongoose");
+// break out Schema and model into separate files
+const { Schema, model } = require("mongoose");
 const { format } = require("date-fns");
 
-const notionSchema = new mongoose.Schema({
+const notionSchema = new Schema({
   notionText: {
     type: String,
     required: true,
@@ -20,6 +21,21 @@ const notionSchema = new mongoose.Schema({
     required: true,
   },
   reactions: {
-    type: [String],
+    type: [],
   },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    id: false,
+  }
 });
+
+// create a virtual reactionCount that retrieves the length of the thought's reactions array field
+notionSchema.virtual("reactionCount").get(function () {
+  return this.reactions.length;
+});
+
+const Notion = model("Notion", notionSchema);
+
+module.exports = Notion;

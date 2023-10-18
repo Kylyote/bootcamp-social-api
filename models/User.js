@@ -29,6 +29,12 @@ const userSchema = new Schema({
     type: [mongoose.Schema.Types.ObjectId],
     ref: "User",
   },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    id: false,
+  }
 });
 
 // This creates a virtual that gets the length of the user's friends array.

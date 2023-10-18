@@ -1,5 +1,5 @@
 const { connect, connection } = require("mongoose");
 
-connect("mongodb://localhost/postNotionDB");
+connect("mongodb://127.0.0.1:27017/postNotionDB");
 
 module.exports = connection;
