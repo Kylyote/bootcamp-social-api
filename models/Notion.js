@@ -34,10 +34,12 @@ const notionSchema = new Schema(
     id: false,
   }
 );
+// Instantiate Notion model so shit can be added to it
+const Notion = model("Notion", notionSchema);
 
 // Using the MongoDB feature of writing custom methods into model instances
 // Get one notion based on notion _id
-notionSchema.methods.getOneNotion = async function (req, res) {
+Notion.getOneNotion = async function (req, res) {
   try {
     const notion = await Notion.findOne({ _id: req.params.notionId });
 
@@ -50,7 +52,7 @@ notionSchema.methods.getOneNotion = async function (req, res) {
 };
 
 // Create a new notion
-notionSchema.methods.createNotion = async function (req, res) {
+Notion.createNotion = async function (req, res) {
   try {
     const newNotion = await Notion.create(req.body);
     const userNotion = await User.findOneAndUpdate(
@@ -65,7 +67,7 @@ notionSchema.methods.createNotion = async function (req, res) {
 };
 
 // Update a notion based on notion _id
-notionSchema.methods.updateNotion = async function (req, res) {
+Notion.updateNotion = async function (req, res) {
   try {
     const updateData = await Notion.findOneAndUpdate(
       { _id: req.params.notionId },
@@ -84,25 +86,56 @@ notionSchema.methods.updateNotion = async function (req, res) {
 };
 
 // Delete a notion based on notion _id
-notionSchema.methods.deleteNotion = async function (req, res) {
+Notion.deleteNotion = async function (req, res) {
   try {
     const deleteNotion = await Notion.findOneAndDelete({
       _id: req.params.notionId,
     });
+
+    if (!deleteNotion) {
+      return res.status(404).json({ message: "No notion with this id." });
+    }
+
+    res.json({ message: "Notion deleted." });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Notion was not deleted." });
   }
 };
 // Add a reaction to a notion
+Notion.addReaction = async function (req, res) {
+  try {
+    const reactionData = await Notion.findOneAndUpdate(
+      { _id: req.params.notionId },
+      { $addToSet: { reactions: req.body } },
+      { new: true, runValidators: true }
+    );
 
+    if (!reactionData) {
+      return res.status(404).json({ message: "No notion with this id." });
+    }
+
+    res.json(reactionData);
+  } catch (err) {
+    return res.status(500).json({ message: "No notion found with this id." });
+  }
+};
 // Delete a reaction from a notion
+Notion.deleteReaction = async function (req, res) {
+  try {
+    const deleteReaction = await Notion.findOneAndUpdate(
+      { _id: req.params.notionId },
+      { $pull: { reactions: { reactionId: req.params.reactionId } } }
+    );
+  } catch (err) {
+    console.log("Error: Reaction was not deleted.");
+    res.status(500).json(err);
+  }
+};
 
 // create a virtual reactionCount that retrieves the length of the thought's reactions array field
 notionSchema.virtual("reactionCount").get(function () {
   return this.reactions.length;
 });
-
-const Notion = model("Notion", notionSchema);
 
 module.exports = Notion;

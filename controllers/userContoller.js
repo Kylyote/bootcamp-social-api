@@ -12,6 +12,7 @@ module.exports = {
           .json({ message: "There is no user with this id." });
       }
     } catch (err) {
+      console.log("There was an error");
       res.status(500).json(err);
     }
   },
@@ -52,7 +53,7 @@ module.exports = {
         return res.status(404).json({ message: "No user with this id." });
       }
 
-      res.json(deleteData);
+      res.json({ message: "User and associated notions deleted." });
     } catch (err) {
       res.status(500).json(err);
     }
