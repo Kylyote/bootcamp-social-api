@@ -46,6 +46,8 @@ Notion.getOneNotion = async function (req, res) {
     if (!notion) {
       return res.status(404).json({ message: "No notion with this id." });
     }
+
+    res.status(200).json(notion);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -60,7 +62,7 @@ Notion.createNotion = async function (req, res) {
       { $push: { notion: newNotion._id } },
       { new: true, runValidators: true }
     );
-    res.json(newNotion);
+    res.status(200).json(newNotion);
   } catch (err) {
     res.status(500).json(err);
   }

@@ -1,5 +1,6 @@
 // This is written like the activity examples. The Notion posted controller functions are actually in models/Notion.js and are added as methods in the notionSchema.
 const User = require("../models/User");
+const { Notion } = require("../models");
 
 module.exports = {
   async getSingleUser(req, res) {
@@ -11,6 +12,7 @@ module.exports = {
           .status(404)
           .json({ message: "There is no user with this id." });
       }
+      res.status(200).json(userData);
     } catch (err) {
       console.log("There was an error");
       res.status(500).json(err);
@@ -44,17 +46,20 @@ module.exports = {
   async deleteUser(req, res) {
     try {
       const deleteData = await User.findOneAndDelete({
-        _id: req.body.userId,
+        _id: req.params.userId,
       });
+      console.log(deleteData);
 
       // When the user is deleted, have a method that calls the deleteMany() method in the Notion model to remove all the user's notions from the database.
+      Notion.deleteMany({ userName: deleteData.userName });
 
       if (!deleteData) {
         return res.status(404).json({ message: "No user with this id." });
       }
 
-      res.json({ message: "User and associated notions deleted." });
+      res.json({ message: "User and their notions deleted." });
     } catch (err) {
+      console.log("The user was not deleted.");
       res.status(500).json(err);
     }
   },
@@ -70,6 +75,9 @@ module.exports = {
       if (!addFriendData) {
         return res.status(404).json({ message: "No user with this id." });
       }
+
+      console.log("You have added a friend.");
+      res.status(200).json(addFriendData);
     } catch (err) {
       res.status(500).json(err);
     }
@@ -86,6 +94,9 @@ module.exports = {
       if (!deleteFriendData) {
         return res.status(404).json({ message: "No user with this id." });
       }
+
+      console.log("Friend removed succcessfully.");
+      res.status(200).json(deleteFriendData);
     } catch (err) {
       res.status(500).json(err);
     }

@@ -20,6 +20,7 @@ router
   .route("/:notionId")
   .get(Notion.getOneNotion)
   .post(Notion.createNotion)
+  .put(Notion.updateNotion)
   .delete(Notion.deleteNotion);
 
 router.get("/", async (req, res) => {
@@ -27,7 +28,10 @@ router.get("/", async (req, res) => {
   await notion.getOneNotion(req, res);
 });
 
-// Route for adding and deleting a reaction to a notion.
+// Route for adding a reaction.
+router.route("/:notionId/reactions/").post(Notion.addReaction);
+
+// Route for deleting a reaction.
 router
   .route("/:notionId/reactions/:reactionId")
   .post(Notion.addReaction)
