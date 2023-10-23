@@ -7,19 +7,19 @@ const { Notion } = require("../../models");
 router.get("/", async (req, res) => {
   try {
     const notionData = await Notion.find();
-    res.json(notionData);
     console.log("Notion call went through.");
+    res.status(200).json(notionData);
   } catch (error) {
-    console.log("There was a notion error");
+    console.log("There was a notion error" + error);
     res.status(500).json(error);
   }
 });
 
 // Route for adding a new Notion. The methods have been written into the Notion model.
+router.route("/:userId").post(Notion.createNotion);
 router
   .route("/:notionId")
   .get(Notion.getOneNotion)
-  .post(Notion.createNotion)
   .put(Notion.updateNotion)
   .delete(Notion.deleteNotion);
 
