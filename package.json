@@ -4,6 +4,7 @@
   "description": "Simple backend server that uses a CLI to create user accounts, post messages, and delete them.",
   "main": "index.js",
   "scripts": {
+    "seed": "node seeds/seed",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

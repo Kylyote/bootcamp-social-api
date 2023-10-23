@@ -23,11 +23,11 @@ const userSchema = new Schema(
       unique: true,
     },
     notion: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: [Schema.Types.ObjectId],
       ref: "Notion",
     },
     friends: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: [Schema.Types.ObjectId],
       ref: "User",
     },
   },
