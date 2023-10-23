@@ -57,8 +57,9 @@ Notion.getOneNotion = async function (req, res) {
 Notion.createNotion = async function (req, res) {
   try {
     const newNotion = await Notion.create(req.body);
+    const savedNotion = await newNotion.save();
     const userNotion = await User.findOneAndUpdate(
-      { _id: req.body.userId },
+      { _id: req.params.userId },
       { $push: { notion: newNotion._id } },
       { new: true, runValidators: true }
     );
@@ -129,6 +130,9 @@ Notion.deleteReaction = async function (req, res) {
       { _id: req.params.notionId },
       { $pull: { reactions: { reactionId: req.params.reactionId } } }
     );
+
+    console.log("Reaction deleted.");
+    res.status(200).json(deleteReaction);
   } catch (err) {
     console.log("Error: Reaction was not deleted.");
     res.status(500).json(err);

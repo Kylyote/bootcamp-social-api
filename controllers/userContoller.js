@@ -51,7 +51,7 @@ module.exports = {
       console.log(deleteData);
 
       // When the user is deleted, have a method that calls the deleteMany() method in the Notion model to remove all the user's notions from the database.
-      Notion.deleteMany({ userName: deleteData.userName });
+      await Notion.deleteMany({ userName: deleteData.userName });
 
       if (!deleteData) {
         return res.status(404).json({ message: "No user with this id." });
